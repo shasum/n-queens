@@ -79,29 +79,43 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var row = this.get(rowIndex);
+      var count = _.reduce(row, function(accumulator, item){
+        return accumulator = accumulator + item;
+      }, 0);
+      return count > 1; // fixme
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      var rows = this.rows();
+      return _.reduce(rows, function(accumulator, item, index){
+        return accumulator = accumulator || this.hasRowConflictAt(index);
+      }.bind(this), false);
     },
-
-
 
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var rows = this.rows();
+      var column = [];
+      for (var i = 0; i < rows.length; i++) {
+        column.push(rows[i][colIndex]);
+      }
+      var count = _.reduce(column, function(accumulator, item){
+        return accumulator = accumulator + item;
+      }, 0);
+      return count > 1;
     },
 
-    // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      var rows = this.rows();
+      return _.reduce(rows, function(accumulator, item, index){
+        return accumulator = accumulator || this.hasColConflictAt(index);
+      }.bind(this), false);
     },
-
 
 
     // Major Diagonals - go from top-left to bottom-right
