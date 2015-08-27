@@ -80,16 +80,16 @@
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
       var row = this.get(rowIndex);
-      var count = _.reduce(row, function(accumulator, item){
+      var count = _.reduce(row, function(accumulator, item) {
         return accumulator = accumulator + item;
       }, 0);
-      return count > 1; // fixme
+      return count > 1;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
       var rows = this.rows();
-      return _.reduce(rows, function(accumulator, item, index){
+      return _.reduce(rows, function(accumulator, item, index) {
         return accumulator = accumulator || this.hasRowConflictAt(index);
       }.bind(this), false);
     },
@@ -104,7 +104,7 @@
       for (var i = 0; i < rows.length; i++) {
         column.push(rows[i][colIndex]);
       }
-      var count = _.reduce(column, function(accumulator, item){
+      var count = _.reduce(column, function(accumulator, item) {
         return accumulator = accumulator + item;
       }, 0);
       return count > 1;
@@ -112,7 +112,7 @@
 
     hasAnyColConflicts: function() {
       var rows = this.rows();
-      return _.reduce(rows, function(accumulator, item, index){
+      return _.reduce(rows, function(accumulator, item, index) {
         return accumulator = accumulator || this.hasColConflictAt(index);
       }.bind(this), false);
     },
@@ -123,56 +123,80 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      var rows = this.rows();
-      var diag = [];
-      for (var i = 0; i < rows.length; i++) {
-        diag.push(rows[i][majorDiagonalColumnIndexAtFirstRow++]);
-        if (majorDiagonalColumnIndexAtFirstRow >= rows.length) {
-          break;
+      var board = this.rows();
+      var n = board.length;
+
+      for (var row = 0; row < n; row++) {
+        var diag = [];
+        var col = majorDiagonalColumnIndexAtFirstRow;
+        for (var i = row; i < n; i++) {
+          diag.push(board[i][col++]);
+          if (col > n - 1) {
+            break;
+          }
         }
-      };
-      var count = _.reduce(diag, function(accumulator, item){
-        return accumulator = accumulator + item;
-      }, 0);
-      return count > 1;
+        var count = _.reduce(diag, function(accumulator, item) {
+          return accumulator = accumulator + item;
+        }, 0);
+        if (count > 1) {
+          return true;
+        }
+      }
+      return false;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      var rows = this.rows();
-      return _.reduce(rows, function(accumulator, item, index){
-        return accumulator = accumulator || this.hasMajorDiagonalConflictAt(index);
-      }.bind(this), false);
+      var board = this.rows();
+      var n = board.length;
+      var flag = false;
+
+      for (var col = 0; col < n; col++) {
+        flag = flag || this.hasMajorDiagonalConflictAt(col);
+      }
+
+      return flag;
     },
-
-
 
     // Minor Diagonals - go from top-right to bottom-left
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      var rows = this.rows();
-      var diag = [];
-      for (var i = 0; i < rows.length; i++) {
-        diag.push(rows[i][minorDiagonalColumnIndexAtFirstRow--]);
-        if (minorDiagonalColumnIndexAtFirstRow < 0) {
-          break;
+      var board = this.rows();
+      var n = board.length;
+
+      for (var row = 0; row < n; row++) {
+        var diag = [];
+        var col = minorDiagonalColumnIndexAtFirstRow;
+        for (var i = row; i < n; i++) {
+          diag.push(board[i][col--]);
+          if (col < 0) {
+            break;
+          }
         }
-      };
-      var count = _.reduce(diag, function(accumulator, item){
-        return accumulator = accumulator + item;
-      }, 0);
-      return count > 1;
+        var count = _.reduce(diag, function(accumulator, item) {
+          return accumulator = accumulator + item;
+        }, 0);
+        if (count > 1) {
+          return true;
+        }
+      }
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      var rows = this.rows();
-      return _.reduce(rows, function(accumulator, item, index){
-        return accumulator = accumulator || this.hasMinorDiagonalConflictAt(index);
-      }.bind(this), false);
-    }
+      var board = this.rows();
+      var n = board.length;
+      var flag = false;
+
+      for (var col = n - 1; col >= 0; col--) {
+        flag = flag || this.hasMinorDiagonalConflictAt(col);
+      }
+
+      return flag;
+    },
 
     /*--------------------  End of Helper Functions  ---------------------*/
 
